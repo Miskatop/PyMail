@@ -37,3 +37,24 @@ mail.mail(message=mail.read_mail("Message.txt"), subject='Simple Html Message', 
 mail.stop()
 ```
 
+## Read Mails\`
+
+### Example num 1
+
+```python
+
+from mail import Reciver # only Reciver
+
+# Load method Params`
+# login => your email
+# password => your password
+# imap => imap server
+r = Reciver("your@mail.login", 'yourmailpassword')
+
+# Load method Params`
+# folder => default "inbox" > folder from where load mails
+# enc => default "(RFC822)" > encription of message ids
+# count => defult 1 > messages to load
+print(r.load())
+
+```
