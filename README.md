@@ -70,3 +70,16 @@ mail = Email("your@mail.login", 'yourmailpassword')
 print(mail.reader.load())
 
 ```
+### Example 3 - Download attachs
+```python
+from mail import Reciver
+
+r = Reciver("mishamartun@mail.ru", 'M20042005')
+
+for mail in r.load():
+  print("="*100)
+	print(mail['from'])
+  print(mail['message'])
+	for i in mail['attach']:
+		r.download_attachment(*i)
+```
