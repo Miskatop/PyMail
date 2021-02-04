@@ -58,3 +58,15 @@ r = Reciver("your@mail.login", 'yourmailpassword')
 print(r.load())
 
 ```
+
+### Example num 2
+
+```python
+
+from mail import Email
+
+mail = Email("your@mail.login", 'yourmailpassword')
+
+print(mail.reader.load())
+
+```
