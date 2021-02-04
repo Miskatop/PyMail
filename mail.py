@@ -1,10 +1,57 @@
 #!/usr/bin/python3
 import smtplib as root
+import imaplib
+import email
+from email.header import decode_header
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 from email.mime.image import MIMEImage
-from email.mime.audio import MIMEAudio
 import os
+
+class Reciver:
+	def __init__(self, login:str, password:str, imap=None):
+		self.imap = imap if imap else 'imap.{}'.format(login.split('@')[-1])
+		self.connection = imaplib.IMAP4_SSL(self.imap)
+		self.connection.login(login, password)
+
+	def load(self, folder:str='inbox', enc="(RFC822)", count=1):
+		result = []
+		status, messages = self.connection.select("inbox")
+		if status == 'OK':
+			messages = int(messages[0])
+
+			for i in range(messages, messages-count, -1):
+				current_message = {'message':''}
+				res, msg = self.connection.fetch(str(i), enc)
+				for response in msg:
+					if isinstance(response, tuple):
+						msg = email.message_from_bytes(response[1])
+						subject, encoding = decode_header(msg["Subject"])[0]
+						
+						if isinstance(subject, bytes):
+							subject = subject.decode(encoding)
+						current_message['subject'] = subject
+
+						From, encoding = decode_header(msg.get("From"))[0]
+						if isinstance(From, bytes):
+							From = From.decode(encoding)
+						current_message['from'] = From
+
+						if msg.is_multipart():
+							current_message['attach'] = []
+							for part in msg.walk():
+								try:
+									current_message['message'] += part.get_payload(decode=True).decode()
+								except:
+									pass
+								current_message['attach'].append(part)	
+						else:
+							current_message['message'] = msg.get_payload(decode=True).decode()
+						current_message['content_type'] = msg.get_content_type()
+				result.append(current_message)
+
+		return result
+
 
 class EMail:
 	def __init__(self, **kwargs):
@@ -14,6 +61,7 @@ class EMail:
 
 		self._server = root.SMTP_SSL( *self._smtp )
 		self._server.login( self._login, self._password )
+		self.reader = Reciver(self._login, self._password)
 
 	def mail(self, **data):
 		""" Method for sending emils """
