@@ -67,18 +67,20 @@ class EMail:
 		self._login      = kwargs['login']
 		self._password   = kwargs['password']
 		self._smtp = kwargs['smtp'] if 'smtp' in kwargs else ('smtp.'+self._login.split('@')[-1], 456)
+		self._imap = kwargs['imap'] if 'imap' in kwargs else 'imap.{}'.format(self._login.split('@')[-1])
+
 
 		self._server = root.SMTP_SSL( *self._smtp )
 		self._server.login( self._login, self._password )
-		self.reader = Reciver(self._login, self._password)
+		self.reader = Reciver(self._login, self._password, imap=kwargs['imap'] if 'imap' in kwargs else self._imap)
 
 	def mail(self, **data):
 		""" Method for sending emils """
 		msg = MIMEMultipart()
 
-		msg[ 'Subject' ] = data['subject']
+		msg[ 'Subject' ] = data['subject'] if 'subject' in data else ""
 		msg[ 'From' ] = self._login
-		msg.attach( MIMEText( data['message'], 'plain' ) )
+		msg.attach( MIMEText( data['message'] if 'message' in data else "" , 'plain' ) )
 
 		self._server.sendmail( self._login, data['to'], msg.as_string() )
 
