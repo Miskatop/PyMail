@@ -63,7 +63,7 @@ class EMail:
 
 		self._server.sendmail( self._login, data['to'], msg.as_string() )
 
-	def read_html(self, path, encoding="utf-8"):
+	def read_file(self, path, encoding="utf-8"):
 		with open(path, 'r', encoding=encoding) as f:
 			return f.read()
 
