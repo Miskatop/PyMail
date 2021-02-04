@@ -44,13 +44,22 @@ class Reciver:
 									current_message['message'] += part.get_payload(decode=True).decode()
 								except:
 									pass
-								current_message['attach'].append(part)	
+								current_message['attach'].append([part, str(part.get("Content-Disposition"))])
 						else:
 							current_message['message'] = msg.get_payload(decode=True).decode()
+
 						current_message['content_type'] = msg.get_content_type()
+
 				result.append(current_message)
 
 		return result
+
+	def download_attachment(self, part, content_disposition, folder='.'):
+		if "attachment" in content_disposition:
+			filename = part.get_filename()
+			if filename:
+				filepath = os.path.join(folder, filename)
+				open(filepath, "wb").write(part.get_payload(decode=True))
 
 
 class EMail:
