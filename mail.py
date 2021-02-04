@@ -72,7 +72,7 @@ class EMail:
 		self._server.quit()
 
 if __name__ == '__main__':
-	mail = EMail(login='mikhayil.martirosyan@realschool.am', password='shirak#1')
-	mail.mail(message="Hello", subject='Simple Html Message', to='mmiisshhaaxx@gmail.com')
+	mail = EMail(login='Your@mail.login', password='yourmailpassword')
+	mail.mail(message="Hello", subject='Simple Html Message', to='reciver@email.addres')
 	mail.stop()
 
