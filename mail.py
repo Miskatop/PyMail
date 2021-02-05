@@ -8,8 +8,10 @@ from email.mime.multipart import MIMEMultipart
 from email.mime.image import MIMEImage
 import os
 
-# Errors
+__license__ = "GNU GENERAL PUBLIC LICENSE"
+__author__ = "Mikhayil Martirosyan mmiisshhaaxx@gmail.com"
 
+# Errors
 class UndefinedReaderError(Exception):
 	def __init__(self, *args):
 		self.msg = args[0] if len(args) != 0 else None
@@ -278,6 +280,4 @@ class EMail:
 		return self._server.quit()
 
 if __name__ == '__main__':
-	mail = EMail(login='Your@mail.login', password='yourmailpassword')
-	mail.mail(message="Hello", subject='Simple Html Message', to='reciver@email.addres')
-	mail.stop()
+	print('PyMail - Copyright (C) 2021 Mikhayil Martirosyan')
