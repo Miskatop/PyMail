@@ -4,9 +4,49 @@
 ```
 email 4.0+
 ```
+
+## constructors
+
+### EMail
+#### Arguments -> login[str] -  password[str] - imap[tuple] - smtp[tuple] - reader[bool]
+
+> load()
+>> Arguments -> folder[str] - enc[str] - count[int]
+
+> download_attachment()
+>> Arguments -> part[obj] - content_disposition[obj] - folder[str]
+
+### Reciver
+#### Arguments -> login[str] -  password[str] - imap[tuple]
+
+> read()
+>> Arguments -> folder[str] - enc[str] - count[int]
+
+> download()
+>> Arguments -> part[obj] - content_disposition[obj] - folder[str]
+
+> mail()
+>> Arguments -> message[str], subject[str], to[str]
+
+> image()
+>> Arguments -> message[str], subject[str], to[str], path[str]
+
+> bomb()
+>> Arguments -> message[str], subject[str], to[str], count[int]
+
+> html_message()
+>> Arguments -> html[str], subject[str], to[str]
+
+> read_file()
+>> Arguments -> path[str] - encoding[str]
+
+> stop()
+>> Arguments -> [EMPTY]
+
 ## Usage\`
 
 ### Send Simple Message\`
+#### Attributes -> message, subject, to
 ```python
 
 mail = EMail(login='your@mail.login', password='yourmailpassword')
@@ -16,16 +56,26 @@ mail.stop()
 ```
 
 ### Send Message Bomber (many messages) \`
+#### Attributes -> message*, subject*, to, count
 ```python
 mail = EMail(login='your@mail.login', password='yourmailpassword')
 mail.bomb(message="Hello", subject='Simple Html Message', to='mail@to.recive', count=10) # count message recive the client
 mail.stop()
 ```
 
-### Send html Bomber \`
+### Send html Message \`
+#### Attributes -> html*, subject*, to
 ```python
 mail = EMail(login='your@mail.login', password='yourmailpassword')
 mail.html(html="<h1>Hello</h1>", subject='Simple Html Message', to='mail@to.recive')
+mail.stop()
+```
+
+### Send Image Message \`
+#### Attributes -> message*, subject*, to, path
+```python
+mail = EMail(login='your@mail.login', password='yourmailpassword')
+mail.image(path="hello.jpg", message="Hello World", subject='Simple Html Message', to='mail@to.recive')
 mail.stop()
 ```
 
