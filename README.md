@@ -5,44 +5,6 @@
 email 4.0+
 ```
 
-## constructors
-
-### EMail
-#### Arguments -> login[str] -  password[str] - imap[tuple] - smtp[tuple] - reader[bool]
-
-> load()
->> Arguments -> folder[str] - enc[str] - count[int]
-
-> download_attachment()
->> Arguments -> part[obj] - content_disposition[obj] - folder[str]
-
-### Reciver
-#### Arguments -> login[str] -  password[str] - imap[tuple]
-
-> read()
->> Arguments -> folder[str] - enc[str] - count[int]
-
-> download()
->> Arguments -> part[obj] - content_disposition[obj] - folder[str]
-
-> mail()
->> Arguments -> message[str], subject[str], to[str]
-
-> image()
->> Arguments -> message[str], subject[str], to[str], path[str]
-
-> bomb()
->> Arguments -> message[str], subject[str], to[str], count[int]
-
-> html_message()
->> Arguments -> html[str], subject[str], to[str]
-
-> read_file()
->> Arguments -> path[str] - encoding[str]
-
-> stop()
->> Arguments -> [EMPTY]
-
 ## Usage\`
 
 ### Send Simple Message\`
@@ -133,3 +95,43 @@ for mail in r.load():
 	for i in mail['attach']:
 		r.download_attachment(*i)
 ```
+
+
+## constructors
+
+### EMail
+#### Arguments -> login[str] -  password[str] - imap[tuple] - smtp[tuple] - reader[bool]
+
+> load()
+>> Arguments -> folder[str] - enc[str] - count[int]
+
+> download_attachment()
+>> Arguments -> part[obj] - content_disposition[obj] - folder[str]
+
+### Reciver
+#### Arguments -> login[str] -  password[str] - imap[tuple]
+
+> read()
+>> Arguments -> folder[str] - enc[str] - count[int]
+
+> download()
+>> Arguments -> part[obj] - content_disposition[obj] - folder[str]
+
+> mail()
+>> Arguments -> message[str], subject[str], to[str]
+
+> image()
+>> Arguments -> message[str], subject[str], to[str], path[str]
+
+> bomb()
+>> Arguments -> message[str], subject[str], to[str], count[int]
+
+> html_message()
+>> Arguments -> html[str], subject[str], to[str]
+
+> read_file()
+>> Arguments -> path[str] - encoding[str]
+
+> stop()
+>> Arguments -> [EMPTY]
+
