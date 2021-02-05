@@ -42,6 +42,38 @@ class SmtpError(Exception):
 		else:
 			return 'SmtpError'
 
+
+class EmptyMailError(Exception):
+	def __init__(self, *args):
+		self.msg = args[0] if len(args) != 0 else None
+
+	def __str__(self):
+		if self.msg:
+			return 'EmptyMailError {}'.format(self.msg)
+		else:
+			return 'EmptyMailError - send message text'
+
+class EmptySubjectError(Exception):
+	def __init__(self, *args):
+		self.msg = args[0] if len(args) != 0 else None
+
+	def __str__(self):
+		if self.msg:
+			return 'EmptySubjectError {}'.format(self.msg)
+		else:
+			return 'EmptySubjectError - send message Subject'
+
+class PathError(Exception):
+	def __init__(self, *args):
+		self.msg = args[0] if len(args) != 0 else None
+
+	def __str__(self):
+		if self.msg:
+			return 'PathError {}'.format(self.msg)
+		else:
+			return 'PathError - send message Subject'
+
+
 # Main Code
 class Reciver:
 	def __init__(self, login:str, password:str, imap=None, message_load_type=0):
@@ -107,6 +139,9 @@ class Reciver:
 
 class EMail:
 	reader = None
+	message_min_length = 10
+	has_subject = True
+	html_prop = 2
 
 
 	def __init__(self, **kwargs):
@@ -147,27 +182,54 @@ class EMail:
 	def mail(self, **data):
 		""" Method for sending emils """
 		msg = MIMEMultipart()
+		if 'message' in data and len(data['message']) > self.message_min_length:
+			message = data['message']
+		else:
+			raise EmptyMailError("message is empty send message as message atribute")
 
-		msg[ 'Subject' ] = data['subject'] if 'subject' in data else ""
+		if not 'subject' in data and self.has_subject:
+			raise EmptySubjectError("send the subject of message by subject attribute")
+
+		subject = data['subject'] if 'subject' in data else ""
+
+		msg[ 'Subject' ] = subject
 		msg[ 'From' ] = self._login
-		msg.attach( MIMEText( data['message'] if 'message' in data else "" , 'plain' ) )
+		msg.attach( MIMEText( message , 'plain' ) )
 
 		return self._server.sendmail( self._login, data['to'], msg.as_string() )
 
 
 	def image(self,**data):
 		""" Method for sending images """
-		with open(data['path'], 'rb') as f :
-			img_data = f.read()
+
+		if 'message' in data and len(data['message']) > self.message_min_length:
+			message = data['message']
+		else:
+			raise EmptyMailError("message is empty send message as message atribute")
+
+		if not 'subject' in data and self.has_subject:
+			raise EmptySubjectError("send the subject of message by subject attribute")
+
+		if 'path' in data:
+			path = data['path']
+		else:
+			raise PathError("Path is not defined")
+
+		subject = data['subject'] if 'subject' in data else ""
+
+		try:
+			with open(path, 'rb') as f :
+				img_data = f.read()
+		except Exception as e:
+			raise e
 
 		msg = MIMEMultipart()
 
-		msg[ 'Subject' ] = data['subject']
+		msg[ 'Subject' ] = subject
 		msg[ 'From' ] = self._login
 
 		msg.attach( MIMEText( data['message'], 'plain' ) )
-		image = MIMEImage(img_data, name=os.path.basename(data['path']))
-		msg.attach(image)
+		msg.attach( MIMEImage(img_data, name=os.path.basename(path)) )
 
 		return self._server.sendmail( self._login, data['to'], msg.as_string() )
 
@@ -188,7 +250,15 @@ class EMail:
 
 
 	def html_message(self, **data):
-		html = data['html']
+		if 'html' in data and len(data['html']) > self.message_min_length*self.html_prop:
+			html = data['html']
+		else:
+			raise EmptyMailError("html is empty send html as html atribute")
+
+		if not 'subject' in data and self.has_subject:
+			raise EmptySubjectError("send the subject of message by subject attribute")
+
+		subject = data['subject'] if 'subject' in data else ""
 
 		msg = MIMEMultipart()
 
