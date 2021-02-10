@@ -6,78 +6,13 @@ from email.header import decode_header
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 from email.mime.image import MIMEImage
+from .errors import *
 import os
 
-__license__ = "GNU GENERAL PUBLIC LICENSE"
-__author__ = "Mikhayil Martirosyan mmiisshhaaxx@gmail.com"
 
-# Errors
-class UndefinedReaderError(Exception):
-	def __init__(self, *args):
-		self.msg = args[0] if len(args) != 0 else None
-
-	def __str__(self):
-		if self.msg:
-			return 'UndefinedReaderError {}'.format(self.msg)
-		else:
-			return 'UndefinedReaderError'
-
-
-class ImapError(Exception):
-	def __init__(self, *args):
-		self.msg = args[0] if len(args) != 0 else None
-
-	def __str__(self):
-		if self.msg:
-			return 'ImapError {}'.format(self.msg)
-		else:
-			return 'ImapError'
-
-
-class SmtpError(Exception):
-	def __init__(self, *args):
-		self.msg = args[0] if len(args) != 0 else None
-
-	def __str__(self):
-		if self.msg:
-			return 'SmtpError {}'.format(self.msg)
-		else:
-			return 'SmtpError'
-
-
-class EmptyMailError(Exception):
-	def __init__(self, *args):
-		self.msg = args[0] if len(args) != 0 else None
-
-	def __str__(self):
-		if self.msg:
-			return 'EmptyMailError {}'.format(self.msg)
-		else:
-			return 'EmptyMailError - send message text'
-
-class EmptySubjectError(Exception):
-	def __init__(self, *args):
-		self.msg = args[0] if len(args) != 0 else None
-
-	def __str__(self):
-		if self.msg:
-			return 'EmptySubjectError {}'.format(self.msg)
-		else:
-			return 'EmptySubjectError - send message Subject'
-
-class PathError(Exception):
-	def __init__(self, *args):
-		self.msg = args[0] if len(args) != 0 else None
-
-	def __str__(self):
-		if self.msg:
-			return 'PathError {}'.format(self.msg)
-		else:
-			return 'PathError - send message Subject'
-
-
-# Main Code
 class Reciver:
+
+
 	def __init__(self, login:str, password:str, imap=None, message_load_type=0):
 		self.imap = imap if imap else ('imap.{}'.format(login.split('@')[-1]), 993)
 		try:
@@ -88,9 +23,10 @@ class Reciver:
 		self.connection.login(login, password)
 		self.message_load_type = message_load_type
 
+
 	def load(self, folder:str='inbox', enc="(RFC822)", count=1):
 		result = []
-		status, messages = self.connection.select("inbox")
+		status, messages = self.connection.select(folder)
 		if status == 'OK':
 			messages = int(messages[0])
 
@@ -131,6 +67,11 @@ class Reciver:
 
 		return result
 
+	def count(self, folder:str='inbox'):
+		_, messages = self.connection.select(folder)
+		return int(messages[0].decode('utf-8'))
+
+
 	def download_attachment(self, part, content_disposition, folder='.'):
 		if "attachment" in content_disposition:
 			filename = part.get_filename()
@@ -170,6 +111,13 @@ class EMail:
 	def read(self, *args, **kwargs):
 		if self.reader:
 			return self.reader.load(*args, **kwargs)
+		else:
+			raise UndefinedReaderError('Reader is not Defined')
+
+
+	def count(self, *args, **kwargs):
+		if self.reader:
+			return self.reader.count(*args, **kwargs)
 		else:
 			raise UndefinedReaderError('Reader is not Defined')
 
