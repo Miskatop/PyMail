@@ -1,4 +1,4 @@
-# PyMail - mail client by python
+# PyMail - mail client written on python
 
 ## Requirements\`
 ```
